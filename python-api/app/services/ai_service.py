@@ -14,7 +14,7 @@ CATEGORIES = [
     "otros"
 ]
 
-SENTIMENTS = ["positivo", "negativo", "neutro"]
+SENTIMENTS = ["positivo", "negativo"]
 
 HF_API_URL = "https://router.huggingface.co/v1/chat/completions"
 
