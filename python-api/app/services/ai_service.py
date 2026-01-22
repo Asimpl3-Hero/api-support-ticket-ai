@@ -16,7 +16,7 @@ CATEGORIES = [
 
 SENTIMENTS = ["positivo", "negativo", "neutro"]
 
-HF_API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3"
+HF_API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
 
 
 def analyze_ticket(ticket_text: str) -> dict:
