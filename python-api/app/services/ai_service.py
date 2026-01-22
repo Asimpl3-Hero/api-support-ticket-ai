@@ -47,12 +47,12 @@ Responde SOLO con el JSON, ejemplo: {{"category": "soporte técnico", "sentiment
     }
 
     payload = {
-        "model": "deepseek-ai/DeepSeek-R1:fastest",
+        "model": "deepseek-ai/DeepSeek-V3:fastest",
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ],
-        "max_tokens": 256,
+        "max_tokens": 100,
         "temperature": 0.1
     }
 
