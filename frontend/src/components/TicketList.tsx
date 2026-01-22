@@ -10,6 +10,54 @@ export function TicketList() {
 
   useEffect(() => {
     fetchTickets()
+
+    // Suscripción a cambios en tiempo real
+    const channel = supabase
+      .channel('tickets-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'tickets',
+        },
+        (payload) => {
+          setTickets((current) => [payload.new as Ticket, ...current])
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'tickets',
+        },
+        (payload) => {
+          setTickets((current) =>
+            current.map((ticket) =>
+              ticket.id === payload.new.id ? (payload.new as Ticket) : ticket
+            )
+          )
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'tickets',
+        },
+        (payload) => {
+          setTickets((current) =>
+            current.filter((ticket) => ticket.id !== payload.old.id)
+          )
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   async function fetchTickets() {
