@@ -82,6 +82,57 @@ class AnalyzeTextRequest(BaseModel):
     }
 
 
+class CreateTicketRequest(BaseModel):
+    """Solicitud para crear un nuevo ticket."""
+
+    description: str = Field(
+        ...,
+        min_length=1,
+        description="Descripción del problema o consulta",
+        json_schema_extra={"example": "No puedo acceder a mi cuenta desde hace 2 días"}
+    )
+    category: str | None = Field(
+        default=None,
+        description="Categoría del ticket (opcional)",
+        json_schema_extra={"example": "soporte técnico"}
+    )
+    sentiment: str | None = Field(
+        default=None,
+        description="Sentimiento del ticket (opcional)",
+        json_schema_extra={"example": "negativo"}
+    )
+
+
+class CreateTicketResponse(BaseModel):
+    """Respuesta de la creación de un ticket."""
+
+    ticket_id: str = Field(
+        ...,
+        description="UUID del ticket creado"
+    )
+    description: str = Field(
+        ...,
+        description="Descripción del ticket"
+    )
+    category: str | None = Field(
+        default=None,
+        description="Categoría del ticket"
+    )
+    sentiment: str | None = Field(
+        default=None,
+        description="Sentimiento del ticket"
+    )
+    processed: bool = Field(
+        ...,
+        description="Estado de procesamiento"
+    )
+    message: str = Field(
+        ...,
+        description="Mensaje descriptivo",
+        json_schema_extra={"example": "Ticket creado exitosamente"}
+    )
+
+
 class AnalyzeTextResponse(BaseModel):
     """Respuesta del análisis de texto."""
 

@@ -1,10 +1,14 @@
+import { useState } from 'react'
 import { Header } from './components/ui/Header'
 import { StatsCards } from './components/ui/StatsCards'
 import { FilterTabs } from './components/ui/FilterTabs'
 import { TicketTable } from './components/ui/TicketTable'
+import { CreateTicketModal } from './components/ux/CreateTicketModal'
 import { useTickets } from './hooks/useTickets'
 
 function App() {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+
   const {
     tickets,
     loading,
@@ -23,6 +27,7 @@ function App() {
         <Header
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          onNewTicket={() => setIsCreateModalOpen(true)}
         />
 
         <StatsCards
@@ -43,9 +48,14 @@ function App() {
             {error}
           </div>
         ) : (
-          <TicketTable tickets={tickets} loading={loading} />
+          <TicketTable tickets={tickets} loading={loading} searchQuery={searchQuery} />
         )}
       </div>
+
+      <CreateTicketModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </div>
   )
 }

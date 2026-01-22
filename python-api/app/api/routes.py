@@ -3,9 +3,11 @@ from app.models.schemas import (
     ProcessTicketRequest,
     ProcessTicketResponse,
     AnalyzeTextRequest,
-    AnalyzeTextResponse
+    AnalyzeTextResponse,
+    CreateTicketRequest,
+    CreateTicketResponse
 )
-from app.services.ticket_service import get_ticket_by_id, update_ticket
+from app.services.ticket_service import get_ticket_by_id, update_ticket, create_ticket
 from app.services.ai_service import analyze_ticket
 
 router = APIRouter()
@@ -175,4 +177,71 @@ def analyze_text(request: AnalyzeTextRequest):
     return AnalyzeTextResponse(
         category=analysis["category"],
         sentiment=analysis["sentiment"]
+    )
+
+
+@router.post(
+    "/create-ticket",
+    response_model=CreateTicketResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Crear un nuevo ticket de soporte",
+    response_description="Ticket creado exitosamente",
+    responses={
+        201: {
+            "description": "Ticket creado exitosamente",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "ticket_id": "550e8400-e29b-41d4-a716-446655440000",
+                        "description": "No puedo acceder a mi cuenta",
+                        "category": None,
+                        "sentiment": None,
+                        "processed": False,
+                        "message": "Ticket creado exitosamente"
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Descripción vacía",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "La descripción no puede estar vacía"}
+                }
+            }
+        }
+    }
+)
+def create_ticket_endpoint(request: CreateTicketRequest):
+    """
+    Crea un nuevo ticket de soporte en Supabase.
+
+    Este endpoint:
+
+    1. **Recibe la descripción** del problema o consulta del cliente
+    2. **Opcionalmente** puede recibir categoría y sentimiento pre-definidos
+    3. **Inserta el ticket** en Supabase con `processed: false`
+    4. **Supabase notifica** a sistemas externos (n8n) via Realtime/Webhooks
+
+    El ticket quedará pendiente de procesamiento con IA.
+    """
+    if not request.description.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La descripción no puede estar vacía"
+        )
+
+    ticket = create_ticket(
+        description=request.description.strip(),
+        category=request.category,
+        sentiment=request.sentiment
+    )
+
+    return CreateTicketResponse(
+        ticket_id=ticket["id"],
+        description=ticket["description"],
+        category=ticket.get("category"),
+        sentiment=ticket.get("sentiment"),
+        processed=ticket.get("processed", False),
+        message="Ticket creado exitosamente"
     )

@@ -1,10 +1,15 @@
 import { useState } from 'react'
 import type { Ticket } from '../../types/ticket'
 import { processTicket } from '../../lib/api'
+import { LoadingSpinner } from '../ux/LoadingSpinner'
+import { EmptyState } from '../ux/EmptyState'
+import { TicketModal } from '../ux/TicketModal'
+import { useToast } from '../ux/Toast'
 
 interface TicketTableProps {
   tickets: Ticket[]
   loading: boolean
+  searchQuery?: string
 }
 
 const categoryColors: Record<string, string> = {
@@ -41,68 +46,102 @@ function generateTicketId(id: string): string {
   return `TK-${id.slice(0, 3).toUpperCase()}`
 }
 
-export function TicketTable({ tickets, loading }: TicketTableProps) {
+export function TicketTable({ tickets, loading, searchQuery }: TicketTableProps) {
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null)
+  const [processingId, setProcessingId] = useState<string | null>(null)
+  const { showToast } = useToast()
+
+  async function handleProcess(ticketId: string) {
+    try {
+      setProcessingId(ticketId)
+      await processTicket(ticketId)
+      showToast('success', 'Ticket procesado exitosamente')
+      setSelectedTicket(null)
+    } catch (err) {
+      showToast('error', err instanceof Error ? err.message : 'Error al procesar ticket')
+    } finally {
+      setProcessingId(null)
+    }
+  }
+
   if (loading) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-blue"></div>
-      </div>
-    )
+    return <LoadingSpinner size="lg" text="Cargando tickets..." />
   }
 
   if (tickets.length === 0) {
+    if (searchQuery) {
+      return (
+        <EmptyState
+          icon="search"
+          title="Sin resultados"
+          description={`No se encontraron tickets que coincidan con "${searchQuery}"`}
+        />
+      )
+    }
     return (
-      <div className="bg-dark-card border border-dark-border rounded-xl p-8 text-center text-text-muted">
-        No hay tickets disponibles
-      </div>
+      <EmptyState
+        icon="tickets"
+        title="No hay tickets"
+        description="Aún no hay tickets de soporte registrados en el sistema"
+      />
     )
   }
 
   return (
-    <div className="bg-dark-card border border-dark-border rounded-xl overflow-hidden">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-dark-border">
-        <h2 className="font-semibold text-text-primary">Tickets Recientes</h2>
-        <span className="text-sm text-text-muted">{tickets.length} tickets</span>
+    <>
+      <div className="bg-dark-card border border-dark-border rounded-xl overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-dark-border">
+          <h2 className="font-semibold text-text-primary">Tickets Recientes</h2>
+          <span className="text-sm text-text-muted">{tickets.length} tickets</span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-dark-border">
+                <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Ticket</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Estado</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Sentimiento</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Categoría</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Creado</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Acciones</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-dark-border">
+              {tickets.map((ticket) => (
+                <TicketRow
+                  key={ticket.id}
+                  ticket={ticket}
+                  onViewDetails={() => setSelectedTicket(ticket)}
+                  onProcess={() => handleProcess(ticket.id)}
+                  processing={processingId === ticket.id}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-dark-border">
-              <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Ticket</th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Estado</th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Sentimiento</th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Categoría</th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Creado</th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Acciones</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-dark-border">
-            {tickets.map((ticket) => (
-              <TicketRow key={ticket.id} ticket={ticket} />
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      <TicketModal
+        ticket={selectedTicket}
+        isOpen={!!selectedTicket}
+        onClose={() => setSelectedTicket(null)}
+        onProcess={handleProcess}
+        processing={!!processingId}
+      />
+    </>
   )
 }
 
-function TicketRow({ ticket }: { ticket: Ticket }) {
-  const [processing, setProcessing] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
+interface TicketRowProps {
+  ticket: Ticket
+  onViewDetails: () => void
+  onProcess: () => void
+  processing: boolean
+}
 
-  async function handleProcess() {
-    try {
-      setProcessing(true)
-      await processTicket(ticket.id)
-    } catch (err) {
-      console.error('Error processing ticket:', err)
-    } finally {
-      setProcessing(false)
-      setMenuOpen(false)
-    }
-  }
+function TicketRow({ ticket, onViewDetails, onProcess, processing }: TicketRowProps) {
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const sentiment = ticket.sentiment ? sentimentConfig[ticket.sentiment] : null
   const categoryColor = ticket.category ? categoryColors[ticket.category] || 'text-text-muted' : 'text-text-muted'
@@ -161,17 +200,22 @@ function TicketRow({ ticket }: { ticket: Ticket }) {
           {menuOpen && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-              <div className="absolute right-0 mt-1 w-48 bg-dark-card border border-dark-border rounded-lg shadow-lg z-20">
+              <div className="absolute right-0 mt-1 w-48 bg-dark-card border border-dark-border rounded-lg shadow-lg z-20 animate-scale-in">
                 {!ticket.processed && (
                   <button
-                    onClick={handleProcess}
+                    onClick={() => { onProcess(); setMenuOpen(false) }}
                     disabled={processing}
-                    className="w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-dark-hover transition-colors disabled:opacity-50"
+                    className="w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-dark-hover transition-colors disabled:opacity-50 flex items-center gap-2"
                   >
+                    <SparklesIcon className="w-4 h-4 text-accent-blue" />
                     {processing ? 'Procesando...' : 'Procesar con IA'}
                   </button>
                 )}
-                <button className="w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-dark-hover transition-colors">
+                <button
+                  onClick={() => { onViewDetails(); setMenuOpen(false) }}
+                  className="w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-dark-hover transition-colors flex items-center gap-2"
+                >
+                  <EyeIcon className="w-4 h-4 text-text-muted" />
                   Ver detalles
                 </button>
               </div>
@@ -187,6 +231,23 @@ function MoreIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="currentColor" viewBox="0 0 24 24">
       <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+    </svg>
+  )
+}
+
+function SparklesIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+    </svg>
+  )
+}
+
+function EyeIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
     </svg>
   )
 }
