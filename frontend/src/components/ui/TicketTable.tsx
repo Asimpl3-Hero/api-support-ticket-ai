@@ -5,27 +5,12 @@ import { LoadingSpinner } from '../ux/LoadingSpinner'
 import { EmptyState } from '../ux/EmptyState'
 import { TicketModal } from '../ux/TicketModal'
 import { useToast } from '../ux/Toast'
+import { CATEGORY_TEXT_COLORS, SENTIMENT_CONFIG } from '../../constants'
 
 interface TicketTableProps {
   tickets: Ticket[]
   loading: boolean
   searchQuery?: string
-}
-
-const categoryColors: Record<string, string> = {
-  'facturación': 'text-accent-blue',
-  'soporte técnico': 'text-accent-purple',
-  'ventas': 'text-accent-yellow',
-  'devoluciones': 'text-accent-orange',
-  'información general': 'text-accent-cyan',
-  'quejas': 'text-accent-red',
-  'otros': 'text-text-muted',
-}
-
-const sentimentConfig: Record<string, { label: string; class: string }> = {
-  positivo: { label: 'Positivo', class: 'bg-accent-green/20 text-accent-green' },
-  negativo: { label: 'Negativo', class: 'bg-accent-red/20 text-accent-red' },
-  neutro: { label: 'Neutro', class: 'bg-text-muted/20 text-text-muted' },
 }
 
 function formatRelativeTime(dateString: string): string {
@@ -89,22 +74,22 @@ export function TicketTable({ tickets, loading, searchQuery }: TicketTableProps)
 
   return (
     <>
-      <div className="bg-dark-card border border-dark-border rounded-xl overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-dark-border">
+      <div className="card overflow-hidden">
+        <div className="card-header">
           <h2 className="font-semibold text-text-primary">Tickets Recientes</h2>
-          <span className="text-sm text-text-muted">{tickets.length} tickets</span>
+          <span className="text-subtitle">{tickets.length} tickets</span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className="table-container">
+          <table className="table">
             <thead>
-              <tr className="border-b border-dark-border">
-                <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Ticket</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Estado</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Sentimiento</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Categoría</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Creado</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Acciones</th>
+              <tr className="divider">
+                <th className="table-header">Ticket</th>
+                <th className="table-header">Estado</th>
+                <th className="table-header">Sentimiento</th>
+                <th className="table-header">Categoría</th>
+                <th className="table-header">Creado</th>
+                <th className="table-header">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-dark-border">
@@ -143,12 +128,12 @@ interface TicketRowProps {
 function TicketRow({ ticket, onViewDetails, onProcess, processing }: TicketRowProps) {
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const sentiment = ticket.sentiment ? sentimentConfig[ticket.sentiment] : null
-  const categoryColor = ticket.category ? categoryColors[ticket.category] || 'text-text-muted' : 'text-text-muted'
+  const sentiment = ticket.sentiment ? SENTIMENT_CONFIG[ticket.sentiment] : null
+  const categoryColor = ticket.category ? CATEGORY_TEXT_COLORS[ticket.category] || 'text-text-muted' : 'text-text-muted'
 
   return (
-    <tr className="hover:bg-dark-hover transition-colors">
-      <td className="px-6 py-4">
+    <tr className="table-row">
+      <td className="table-cell">
         <div>
           <span className="text-xs text-text-muted">{generateTicketId(ticket.id)}</span>
           <p className="font-medium text-text-primary line-clamp-1">
@@ -160,62 +145,58 @@ function TicketRow({ ticket, onViewDetails, onProcess, processing }: TicketRowPr
           </p>
         </div>
       </td>
-      <td className="px-6 py-4">
-        <span className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-full ${
-          ticket.processed
-            ? 'bg-accent-green/20 text-accent-green'
-            : 'bg-accent-yellow/20 text-accent-yellow'
-        }`}>
+      <td className="table-cell">
+        <span className={`badge ${ticket.processed ? 'badge-success' : 'badge-warning'}`}>
           {ticket.processed ? 'Procesado' : 'Pendiente'}
         </span>
       </td>
-      <td className="px-6 py-4">
+      <td className="table-cell">
         {sentiment ? (
-          <span className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-full ${sentiment.class}`}>
+          <span className={`badge ${sentiment.class}`}>
             {sentiment.label}
           </span>
         ) : (
           <span className="text-text-muted text-sm">-</span>
         )}
       </td>
-      <td className="px-6 py-4">
+      <td className="table-cell">
         <span className={`text-sm ${categoryColor}`}>
           {ticket.category || '-'}
         </span>
       </td>
-      <td className="px-6 py-4">
-        <span className="text-sm text-text-muted">
+      <td className="table-cell">
+        <span className="text-subtitle">
           {formatRelativeTime(ticket.created_at)}
         </span>
       </td>
-      <td className="px-6 py-4">
+      <td className="table-cell">
         <div className="relative">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="p-1 rounded hover:bg-dark-border transition-colors"
           >
-            <MoreIcon className="w-5 h-5 text-text-muted" />
+            <MoreIcon className="icon-md text-text-muted" />
           </button>
 
           {menuOpen && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-              <div className="absolute right-0 mt-1 w-48 bg-dark-card border border-dark-border rounded-lg shadow-lg z-20 animate-scale-in">
+              <div className="dropdown-menu right-0 mt-1 w-48">
                 {!ticket.processed && (
                   <button
                     onClick={() => { onProcess(); setMenuOpen(false) }}
                     disabled={processing}
-                    className="w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-dark-hover transition-colors disabled:opacity-50 flex items-center gap-2"
+                    className="dropdown-item disabled:opacity-50"
                   >
-                    <SparklesIcon className="w-4 h-4 text-accent-blue" />
+                    <SparklesIcon className="icon-sm text-accent-blue" />
                     {processing ? 'Procesando...' : 'Procesar con IA'}
                   </button>
                 )}
                 <button
                   onClick={() => { onViewDetails(); setMenuOpen(false) }}
-                  className="w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-dark-hover transition-colors flex items-center gap-2"
+                  className="dropdown-item"
                 >
-                  <EyeIcon className="w-4 h-4 text-text-muted" />
+                  <EyeIcon className="icon-sm text-text-muted" />
                   Ver detalles
                 </button>
               </div>

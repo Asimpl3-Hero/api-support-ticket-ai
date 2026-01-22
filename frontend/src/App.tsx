@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Header } from './components/ui/Header'
 import { StatsCards } from './components/ui/StatsCards'
+import { TrendsChart } from './components/ui/TrendsChart'
 import { FilterTabs } from './components/ui/FilterTabs'
 import { TicketTable } from './components/ui/TicketTable'
 import { CreateTicketModal } from './components/ux/CreateTicketModal'
@@ -11,6 +12,7 @@ function App() {
 
   const {
     tickets,
+    allTickets,
     loading,
     error,
     stats,
@@ -35,7 +37,10 @@ function App() {
           pending={stats.pending}
           processed={stats.processed}
           negative={stats.negative}
+          trends={stats.trends}
         />
+
+        <TrendsChart tickets={allTickets} />
 
         <FilterTabs
           activeFilter={activeFilter}

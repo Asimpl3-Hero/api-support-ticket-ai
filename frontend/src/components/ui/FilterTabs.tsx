@@ -22,25 +22,15 @@ const filters: { key: FilterType; label: string }[] = [
 
 export function FilterTabs({ activeFilter, onFilterChange, counts }: FilterTabsProps) {
   return (
-    <div className="flex items-center gap-1 mb-6 border-b border-dark-border">
+    <div className="tab-container mb-6">
       {filters.map(({ key, label }) => (
         <button
           key={key}
           onClick={() => onFilterChange(key)}
-          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
-            activeFilter === key
-              ? 'text-text-primary border-accent-blue'
-              : 'text-text-muted border-transparent hover:text-text-secondary'
-          }`}
+          className={`tab ${activeFilter === key ? 'tab-active' : 'tab-inactive'}`}
         >
           {label}
-          <span
-            className={`px-2 py-0.5 text-xs rounded-full ${
-              activeFilter === key
-                ? 'bg-accent-blue text-white'
-                : 'bg-dark-hover text-text-muted'
-            }`}
-          >
+          <span className={`tab-count ${activeFilter === key ? 'tab-count-active' : 'tab-count-inactive'}`}>
             {counts[key]}
           </span>
         </button>

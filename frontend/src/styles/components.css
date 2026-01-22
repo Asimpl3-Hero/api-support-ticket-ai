@@ -1,0 +1,220 @@
+/* ==========================================================================
+   UI Components - Clases reutilizables con @apply
+   ========================================================================== */
+
+/* Cards
+   ========================================================================== */
+
+.card {
+  @apply bg-dark-card border border-dark-border rounded-xl;
+}
+
+.card-header {
+  @apply flex items-center justify-between px-6 py-4 border-b border-dark-border;
+}
+
+.stat-card {
+  @apply bg-dark-card rounded-xl p-5 border-l-4;
+}
+
+/* Badges / Pills
+   ========================================================================== */
+
+.badge {
+  @apply inline-flex px-2.5 py-1 text-xs font-medium rounded-full;
+}
+
+.badge-success {
+  @apply bg-accent-green/20 text-accent-green;
+}
+
+.badge-warning {
+  @apply bg-accent-yellow/20 text-accent-yellow;
+}
+
+.badge-error {
+  @apply bg-accent-red/20 text-accent-red;
+}
+
+.badge-info {
+  @apply bg-accent-blue/20 text-accent-blue;
+}
+
+.badge-muted {
+  @apply bg-text-muted/20 text-text-muted;
+}
+
+.badge-purple {
+  @apply bg-accent-purple/20 text-accent-purple;
+}
+
+.badge-orange {
+  @apply bg-accent-orange/20 text-accent-orange;
+}
+
+.badge-cyan {
+  @apply bg-accent-cyan/20 text-accent-cyan;
+}
+
+/* Botones
+   ========================================================================== */
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 font-medium text-sm rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-primary {
+  @apply px-4 py-2 bg-text-primary text-dark-bg hover:bg-text-secondary;
+}
+
+.btn-secondary {
+  @apply px-4 py-2 bg-dark-card border border-dark-border hover:bg-dark-hover text-text-primary;
+}
+
+.btn-ghost {
+  @apply px-4 py-2 hover:bg-dark-hover text-text-primary;
+}
+
+.btn-icon {
+  @apply p-2 bg-dark-card border border-dark-border hover:bg-dark-hover;
+}
+
+.btn-danger {
+  @apply px-4 py-2 bg-accent-red/20 text-accent-red hover:bg-accent-red/30;
+}
+
+/* Inputs
+   ========================================================================== */
+
+.input {
+  @apply w-full px-4 py-2 bg-dark-card border border-dark-border rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-blue transition-colors;
+}
+
+.input-with-icon {
+  @apply pl-10 pr-4;
+}
+
+/* Tablas
+   ========================================================================== */
+
+.table-container {
+  @apply overflow-x-auto;
+}
+
+.table {
+  @apply w-full;
+}
+
+.table-header {
+  @apply text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider;
+}
+
+.table-row {
+  @apply hover:bg-dark-hover transition-colors;
+}
+
+.table-cell {
+  @apply px-6 py-4;
+}
+
+/* Dropdowns / Menus
+   ========================================================================== */
+
+.dropdown-menu {
+  @apply absolute bg-dark-card border border-dark-border rounded-lg shadow-lg z-20 animate-scale-in;
+}
+
+.dropdown-item {
+  @apply w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-dark-hover transition-colors flex items-center gap-2;
+}
+
+/* Tabs
+   ========================================================================== */
+
+.tab-container {
+  @apply flex items-center gap-1 border-b border-dark-border;
+}
+
+.tab {
+  @apply flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px;
+}
+
+.tab-active {
+  @apply text-text-primary border-accent-blue;
+}
+
+.tab-inactive {
+  @apply text-text-muted border-transparent hover:text-text-secondary;
+}
+
+.tab-count {
+  @apply px-2 py-0.5 text-xs rounded-full;
+}
+
+.tab-count-active {
+  @apply bg-accent-blue text-white;
+}
+
+.tab-count-inactive {
+  @apply bg-dark-hover text-text-muted;
+}
+
+/* Iconos
+   ========================================================================== */
+
+.icon-container {
+  @apply p-2 rounded-lg bg-dark-hover;
+}
+
+.icon-sm {
+  @apply w-4 h-4;
+}
+
+.icon-md {
+  @apply w-5 h-5;
+}
+
+.icon-lg {
+  @apply w-6 h-6;
+}
+
+/* Tipografía
+   ========================================================================== */
+
+.text-title {
+  @apply text-2xl font-bold text-text-primary;
+}
+
+.text-subtitle {
+  @apply text-sm text-text-muted;
+}
+
+.text-label {
+  @apply text-sm font-medium text-text-secondary;
+}
+
+/* Utilidades
+   ========================================================================== */
+
+.divider {
+  @apply border-b border-dark-border;
+}
+
+.overlay {
+  @apply fixed inset-0 bg-black/50 z-40;
+}
+
+.modal {
+  @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+}
+
+.modal-content {
+  @apply bg-dark-card border border-dark-border rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto animate-scale-in;
+}
+
+/* Grid layouts
+   ========================================================================== */
+
+.stats-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4;
+}

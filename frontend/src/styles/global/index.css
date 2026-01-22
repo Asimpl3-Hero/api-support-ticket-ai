@@ -1,6 +1,12 @@
 @import "tailwindcss";
+@import "../components.css";
+
+/* ==========================================================================
+   Theme Variables - Dark Mode (Default)
+   ========================================================================== */
 
 @theme {
+  /* Semantic colors - these change based on theme */
   --color-dark-bg: #0a0a0a;
   --color-dark-card: #141414;
   --color-dark-border: #262626;
@@ -8,6 +14,8 @@
   --color-text-primary: #fafafa;
   --color-text-secondary: #a1a1aa;
   --color-text-muted: #71717a;
+
+  /* Accent colors - consistent across themes */
   --color-accent-blue: #3b82f6;
   --color-accent-green: #22c55e;
   --color-accent-yellow: #eab308;
@@ -15,10 +23,55 @@
   --color-accent-orange: #f97316;
   --color-accent-purple: #a855f7;
   --color-accent-cyan: #06b6d4;
+
+  /* Animations */
   --animate-slide-in: slide-in 0.3s ease-out;
   --animate-scale-in: scale-in 0.2s ease-out;
   --animate-fade-in: fade-in 0.2s ease-out;
 }
+
+/* ==========================================================================
+   Light Mode Override
+   ========================================================================== */
+
+/* Light mode via system preference */
+@media (prefers-color-scheme: light) {
+  :root:not(.dark) {
+    --color-dark-bg: #f8fafc;
+    --color-dark-card: #ffffff;
+    --color-dark-border: #e2e8f0;
+    --color-dark-hover: #f1f5f9;
+    --color-text-primary: #0f172a;
+    --color-text-secondary: #475569;
+    --color-text-muted: #94a3b8;
+  }
+}
+
+/* Light mode via class (manual toggle) */
+:root.light {
+  --color-dark-bg: #f8fafc;
+  --color-dark-card: #ffffff;
+  --color-dark-border: #e2e8f0;
+  --color-dark-hover: #f1f5f9;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
+}
+
+/* Dark mode via class (manual toggle) */
+:root.dark {
+  --color-dark-bg: #0a0a0a;
+  --color-dark-card: #141414;
+  --color-dark-border: #262626;
+  --color-dark-hover: #1a1a1a;
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
+}
+
+/* ==========================================================================
+   Keyframes
+   ========================================================================== */
 
 @keyframes slide-in {
   from {
@@ -51,13 +104,21 @@
   }
 }
 
+/* ==========================================================================
+   Base Styles
+   ========================================================================== */
+
 body {
   background-color: var(--color-dark-bg);
   color: var(--color-text-primary);
   font-family: system-ui, -apple-system, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Scrollbar styling */
+/* ==========================================================================
+   Scrollbar Styling
+   ========================================================================== */
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
