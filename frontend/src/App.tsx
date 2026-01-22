@@ -1,3 +1,5 @@
+import { TicketList } from './components/TicketList'
+
 function App() {
   return (
     <div className="min-h-screen bg-gray-100">
@@ -9,7 +11,7 @@ function App() {
         </div>
       </header>
       <main className="max-w-7xl mx-auto py-6 px-4">
-        <p className="text-gray-600">Cargando tickets...</p>
+        <TicketList />
       </main>
     </div>
   )
