@@ -1,5 +1,12 @@
 # API Support Ticket AI
 
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115.0-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-2.10.0-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)
+![Hugging Face](https://img.shields.io/badge/Hugging_Face-Mistral_7B-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)
+![Pydantic](https://img.shields.io/badge/Pydantic-2.9.2-E92063?style=for-the-badge&logo=pydantic&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+
 Microservicio de inteligencia artificial para procesar tickets de soporte al cliente. Utiliza **FastAPI** y **Hugging Face Inference API** para analizar automáticamente el texto de los tickets y extraer la categoría y el sentimiento.
 
 ## Tecnologías
