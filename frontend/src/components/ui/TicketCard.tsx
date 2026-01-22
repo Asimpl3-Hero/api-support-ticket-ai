@@ -1,4 +1,6 @@
-import type { Ticket } from '../types/ticket'
+import { useState } from 'react'
+import type { Ticket } from '../../types/ticket'
+import { processTicket } from '../../lib/api'
 
 interface TicketCardProps {
   ticket: Ticket
@@ -21,6 +23,9 @@ const categoryColors: Record<string, string> = {
 }
 
 export function TicketCard({ ticket }: TicketCardProps) {
+  const [processing, setProcessing] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
   const sentimentClass = ticket.sentiment
     ? sentimentColors[ticket.sentiment] || 'bg-gray-100 text-gray-800'
     : ''
@@ -28,6 +33,18 @@ export function TicketCard({ ticket }: TicketCardProps) {
   const categoryClass = ticket.category
     ? categoryColors[ticket.category] || 'bg-gray-100 text-gray-800'
     : ''
+
+  async function handleProcess() {
+    try {
+      setProcessing(true)
+      setError(null)
+      await processTicket(ticket.id)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al procesar')
+    } finally {
+      setProcessing(false)
+    }
+  }
 
   return (
     <div className="bg-white rounded-lg shadow p-4 border border-gray-200">
@@ -42,7 +59,7 @@ export function TicketCard({ ticket }: TicketCardProps) {
 
       <p className="text-gray-700 mb-3 line-clamp-3">{ticket.description}</p>
 
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex gap-2 flex-wrap mb-3">
         {ticket.category && (
           <span className={`text-xs px-2 py-1 rounded-full ${categoryClass}`}>
             {ticket.category}
@@ -54,6 +71,20 @@ export function TicketCard({ ticket }: TicketCardProps) {
           </span>
         )}
       </div>
+
+      {error && (
+        <p className="text-xs text-red-600 mb-2">{error}</p>
+      )}
+
+      {!ticket.processed && (
+        <button
+          onClick={handleProcess}
+          disabled={processing}
+          className="w-full py-2 px-4 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
+        >
+          {processing ? 'Procesando...' : 'Procesar con IA'}
+        </button>
+      )}
     </div>
   )
 }

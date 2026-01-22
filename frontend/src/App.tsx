@@ -1,4 +1,4 @@
-import { TicketList } from './components/TicketList'
+import { TicketList } from './components/ui/TicketList'
 
 function App() {
   return (

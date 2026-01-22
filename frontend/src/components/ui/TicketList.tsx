@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
-import type { Ticket } from '../types/ticket'
+import { supabase } from '../../lib/supabase'
+import type { Ticket } from '../../types/ticket'
 import { TicketCard } from './TicketCard'
 
 export function TicketList() {
