@@ -1,11 +1,12 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from app.api.routes import router
 
 DESCRIPTION = """
 ## API de Procesamiento de Tickets con IA
 
-Este microservicio utiliza **LangChain** y **Hugging Face** para analizar tickets de soporte
+Este microservicio utiliza **Hugging Face** para analizar tickets de soporte
 y extraer automáticamente la categoría y el sentimiento.
 
 ### Funcionalidades principales:
@@ -48,9 +49,17 @@ app = FastAPI(
         "name": "Soporte API",
         "email": "soporte@ejemplo.com",
     },
-    license_info={
-        "name": "MIT",
-    },
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://ai-dashboard.ondeploy.store",
+        "http://localhost:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
