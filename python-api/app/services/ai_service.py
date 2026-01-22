@@ -16,7 +16,7 @@ CATEGORIES = [
 
 SENTIMENTS = ["positivo", "negativo", "neutro"]
 
-HF_API_URL = "https://api-inference.huggingface.co/models/deepseek-ai/DeepSeek-R1"
+HF_API_URL = "https://router.huggingface.co/v1/chat/completions"
 
 
 def analyze_ticket(ticket_text: str) -> dict:
@@ -31,9 +31,9 @@ def analyze_ticket(ticket_text: str) -> dict:
     """
     settings = get_settings()
 
-    prompt = f"""Eres un asistente que analiza tickets de soporte al cliente.
+    system_prompt = "Eres un asistente que analiza tickets de soporte al cliente. Responde ÚNICAMENTE con JSON válido."
 
-Analiza el siguiente ticket y responde ÚNICAMENTE con un JSON válido con dos campos:
+    user_prompt = f"""Analiza el siguiente ticket y responde con un JSON con dos campos:
 - "category": una de estas categorías: {", ".join(CATEGORIES)}
 - "sentiment": uno de estos sentimientos: {", ".join(SENTIMENTS)}
 
@@ -47,22 +47,23 @@ Responde SOLO con el JSON, ejemplo: {{"category": "soporte técnico", "sentiment
     }
 
     payload = {
-        "inputs": prompt,
-        "parameters": {
-            "max_new_tokens": 256,
-            "temperature": 0.1,
-            "return_full_text": False
-        }
+        "model": "deepseek-ai/DeepSeek-R1:fastest",
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+        "max_tokens": 256,
+        "temperature": 0.1
     }
 
-    with httpx.Client(timeout=60.0) as client:
+    with httpx.Client(timeout=120.0) as client:
         response = client.post(HF_API_URL, headers=headers, json=payload)
         response.raise_for_status()
 
     result = response.json()
 
-    if isinstance(result, list) and len(result) > 0:
-        generated_text = result[0].get("generated_text", "")
+    if "choices" in result and len(result["choices"]) > 0:
+        generated_text = result["choices"][0].get("message", {}).get("content", "")
         return parse_llm_response(generated_text)
 
     return {"category": "otros", "sentiment": "neutro"}
