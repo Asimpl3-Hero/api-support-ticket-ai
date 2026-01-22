@@ -16,7 +16,7 @@ CATEGORIES = [
 
 SENTIMENTS = ["positivo", "negativo", "neutro"]
 
-HF_API_URL = "https://api-inference.huggingface.co/models/Qwen/Qwen2.5-1.5B-Instruct"
+HF_API_URL = "https://api-inference.huggingface.co/models/deepseek-ai/DeepSeek-R1"
 
 
 def analyze_ticket(ticket_text: str) -> dict:
@@ -31,17 +31,15 @@ def analyze_ticket(ticket_text: str) -> dict:
     """
     settings = get_settings()
 
-    prompt = f"""<|im_start|>system
-Eres un asistente que analiza tickets de soporte al cliente. Responde ÚNICAMENTE con JSON válido.<|im_end|>
-<|im_start|>user
-Analiza el siguiente ticket y responde con un JSON con dos campos:
+    prompt = f"""Eres un asistente que analiza tickets de soporte al cliente.
+
+Analiza el siguiente ticket y responde ÚNICAMENTE con un JSON válido con dos campos:
 - "category": una de estas categorías: {", ".join(CATEGORIES)}
 - "sentiment": uno de estos sentimientos: {", ".join(SENTIMENTS)}
 
 Ticket: "{ticket_text}"
 
-Responde SOLO con el JSON, ejemplo: {{"category": "soporte técnico", "sentiment": "negativo"}}<|im_end|>
-<|im_start|>assistant"""
+Responde SOLO con el JSON, ejemplo: {{"category": "soporte técnico", "sentiment": "negativo"}}"""
 
     headers = {
         "Authorization": f"Bearer {settings.huggingface_api_token}",
