@@ -16,7 +16,7 @@ CATEGORIES = [
 
 SENTIMENTS = ["positivo", "negativo", "neutro"]
 
-HF_API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+HF_API_URL = "https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta"
 
 
 def analyze_ticket(ticket_text: str) -> dict:
@@ -31,18 +31,17 @@ def analyze_ticket(ticket_text: str) -> dict:
     """
     settings = get_settings()
 
-    prompt = f"""<s>[INST] Eres un asistente que analiza tickets de soporte al cliente.
+    prompt = f"""<|system|>
+Eres un asistente que analiza tickets de soporte al cliente. Responde ÚNICAMENTE con JSON válido.</s>
+<|user|>
+Analiza el siguiente ticket y responde con un JSON con dos campos:
+- "category": una de estas categorías: {", ".join(CATEGORIES)}
+- "sentiment": uno de estos sentimientos: {", ".join(SENTIMENTS)}
 
-Analiza el siguiente ticket y responde ÚNICAMENTE con un JSON válido con dos campos:
-- "category": una de las siguientes categorías: {", ".join(CATEGORIES)}
-- "sentiment": uno de los siguientes sentimientos: {", ".join(SENTIMENTS)}
+Ticket: "{ticket_text}"
 
-Ticket a analizar:
-"{ticket_text}"
-
-Responde SOLO con el JSON, sin texto adicional. Ejemplo de formato:
-{{"category": "soporte técnico", "sentiment": "negativo"}}
-[/INST]</s>"""
+Responde SOLO con el JSON, ejemplo: {{"category": "soporte técnico", "sentiment": "negativo"}}</s>
+<|assistant|>"""
 
     headers = {
         "Authorization": f"Bearer {settings.huggingface_api_token}",
