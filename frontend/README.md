@@ -1,73 +1,109 @@
-# React + TypeScript + Vite
+# Support Ticket AI - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![React](https://img.shields.io/badge/React-19.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-7.2.4-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.1.18-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 
-Currently, two official plugins are available:
+Dashboard para gestión y monitoreo de tickets de soporte con análisis de sentimiento impulsado por IA.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Características
 
-## React Compiler
+- **Dashboard interactivo** con estadísticas en tiempo real
+- **Gráfico de tendencias** semanales con Recharts
+- **Filtros dinámicos** por estado y sentimiento
+- **Modo claro/oscuro** con persistencia en localStorage
+- **Actualizaciones en tiempo real** via Supabase Realtime
+- **Diseño responsive** optimizado para móvil y desktop
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Requisitos
 
-## Expanding the ESLint configuration
+- Node.js 20+
+- npm o pnpm
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Instalación
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# Clonar el repositorio
+git clone <repo-url>
+cd frontend
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Instalar dependencias
+npm install
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Configurar variables de entorno
+cp .env.example .env
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Variables de Entorno
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+VITE_SUPABASE_ANON_KEY=tu-anon-key
+VITE_API_URL=http://localhost:8000
 ```
+
+## Scripts
+
+| Comando | Descripción |
+|---------|-------------|
+| `npm run dev` | Inicia servidor de desarrollo |
+| `npm run build` | Compila para producción |
+| `npm run preview` | Vista previa del build |
+| `npm run lint` | Ejecuta ESLint |
+
+## Estructura del Proyecto
+
+```
+src/
+├── components/
+│   ├── ui/              # Componentes de interfaz
+│   │   ├── Header.tsx
+│   │   ├── StatsCards.tsx
+│   │   ├── TrendsChart.tsx
+│   │   ├── FilterTabs.tsx
+│   │   └── TicketTable.tsx
+│   └── ux/              # Componentes de experiencia
+│       └── CreateTicketModal.tsx
+├── constants/           # Constantes y configuración
+│   └── ticket.ts
+├── hooks/               # Custom hooks
+│   ├── useTickets.ts
+│   └── useTheme.ts
+├── styles/              # Estilos globales
+│   ├── components.css
+│   └── global/
+│       └── index.css
+├── types/               # Tipos TypeScript
+│   └── ticket.ts
+└── App.tsx
+```
+
+## Docker
+
+```bash
+# Build de la imagen
+docker build \
+  --build-arg VITE_SUPABASE_URL=https://tu-proyecto.supabase.co \
+  --build-arg VITE_SUPABASE_ANON_KEY=tu-anon-key \
+  --build-arg VITE_API_URL=http://localhost:8000 \
+  -t support-ticket-frontend .
+
+# Ejecutar contenedor
+docker run -d -p 3000:80 --name frontend support-ticket-frontend
+```
+
+## Tecnologías
+
+| Tecnología | Uso |
+|------------|-----|
+| **React 19** | Librería UI |
+| **Vite 7** | Build tool y dev server |
+| **Tailwind CSS 4** | Framework de estilos |
+| **TypeScript** | Tipado estático |
+| **Recharts** | Gráficos y visualizaciones |
+| **Supabase** | Backend y realtime |
+
+## Licencia
+
+MIT
