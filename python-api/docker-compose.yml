@@ -8,7 +8,8 @@ services:
     env_file:
       - .env
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://python-api.ondeploy.store/health"]
+      test:
+        ["CMD", "curl", "-f", "http://python-api.ondeploy.store:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 5
