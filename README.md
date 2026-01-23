@@ -10,7 +10,7 @@
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 Sistema de gestión de tickets de soporte sistema capaz de recibir tickets de soporte, para categorizarlos y analizar su sentimiento procesandolos mediante agentes de IA, y visualizarlos en tiempo real en un dashboard. Los correos simulados llegan a 
-ingresar a yopmail = soporte-vivetori@yopmail.com
+ingresar a [https://yopmail.com/es/](https://yopmail.com/es/) ingresar con la direccion **soporte-vivetori@yopmail.com** para poder visualizarlos.
 
 ## Produccion
 
