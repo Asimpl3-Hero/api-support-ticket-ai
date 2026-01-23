@@ -9,7 +9,8 @@
 ![n8n](https://img.shields.io/badge/n8n-Automation-EA4B71?style=for-the-badge&logo=n8n&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-Sistema de gestión de tickets de soporte sistema capaz de recibir tickets de soporte, para categorizarlos y analizar su sentimiento procesandolos mediante agentes de IA, y visualizarlos en tiempo real en un dashboard.
+Sistema de gestión de tickets de soporte sistema capaz de recibir tickets de soporte, para categorizarlos y analizar su sentimiento procesandolos mediante agentes de IA, y visualizarlos en tiempo real en un dashboard. Los correos simulados llegan a 
+ingresar a yopmail = soporte-vivetori@yopmail.com
 
 ## Produccion
 
