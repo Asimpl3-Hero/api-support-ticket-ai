@@ -191,13 +191,29 @@ def analyze_text(request: AnalyzeTextRequest):
             "description": "Ticket creado exitosamente",
             "content": {
                 "application/json": {
-                    "example": {
-                        "ticket_id": "550e8400-e29b-41d4-a716-446655440000",
-                        "description": "No puedo acceder a mi cuenta",
-                        "category": None,
-                        "sentiment": None,
-                        "processed": False,
-                        "message": "Ticket creado exitosamente"
+                    "examples": {
+                        "con_ia": {
+                            "summary": "Ticket procesado con IA",
+                            "value": {
+                                "ticket_id": "550e8400-e29b-41d4-a716-446655440000",
+                                "description": "No puedo acceder a mi cuenta",
+                                "category": "soporte técnico",
+                                "sentiment": "negativo",
+                                "processed": True,
+                                "message": "Ticket creado y procesado con IA exitosamente"
+                            }
+                        },
+                        "sin_ia": {
+                            "summary": "Ticket con categoría pre-definida",
+                            "value": {
+                                "ticket_id": "550e8400-e29b-41d4-a716-446655440000",
+                                "description": "Consulta sobre precios",
+                                "category": "ventas",
+                                "sentiment": "positivo",
+                                "processed": True,
+                                "message": "Ticket creado exitosamente"
+                            }
+                        }
                     }
                 }
             }
@@ -220,10 +236,11 @@ def create_ticket_endpoint(request: CreateTicketRequest):
 
     1. **Recibe la descripción** del problema o consulta del cliente
     2. **Opcionalmente** puede recibir categoría y sentimiento pre-definidos
-    3. **Inserta el ticket** en Supabase con `processed: false`
-    4. **Supabase notifica** a sistemas externos (n8n) via Realtime/Webhooks
+    3. **Si no se proporcionan**, analiza automáticamente con IA (DeepSeek-V3)
+    4. **Inserta el ticket** en Supabase con `processed: true`
+    5. **Supabase notifica** a sistemas externos (n8n) via Realtime/Webhooks
 
-    El ticket quedará pendiente de procesamiento con IA.
+    El ticket se procesa automáticamente si no se envían categoría y sentimiento.
     """
     if not request.description.strip():
         raise HTTPException(
@@ -231,17 +248,32 @@ def create_ticket_endpoint(request: CreateTicketRequest):
             detail="La descripción no puede estar vacía"
         )
 
+    description = request.description.strip()
+    category = request.category
+    sentiment = request.sentiment
+    processed_with_ai = False
+
+    # Si no se proporcionan categoría y sentimiento, procesar con IA
+    if category is None and sentiment is None:
+        analysis = analyze_ticket(description)
+        category = analysis["category"]
+        sentiment = analysis["sentiment"]
+        processed_with_ai = True
+
     ticket = create_ticket(
-        description=request.description.strip(),
-        category=request.category,
-        sentiment=request.sentiment
+        description=description,
+        category=category,
+        sentiment=sentiment,
+        processed=True
     )
+
+    message = "Ticket creado y procesado con IA exitosamente" if processed_with_ai else "Ticket creado exitosamente"
 
     return CreateTicketResponse(
         ticket_id=ticket["id"],
         description=ticket["description"],
         category=ticket.get("category"),
         sentiment=ticket.get("sentiment"),
-        processed=ticket.get("processed", False),
-        message="Ticket creado exitosamente"
+        processed=True,
+        message=message
     )

@@ -11,13 +11,18 @@ def get_ticket_by_id(ticket_id: str) -> dict | None:
     return None
 
 
-def create_ticket(description: str, category: str | None = None, sentiment: str | None = None) -> dict:
+def create_ticket(
+    description: str,
+    category: str | None = None,
+    sentiment: str | None = None,
+    processed: bool = False
+) -> dict:
     """Crea un nuevo ticket en la base de datos."""
     client = get_supabase_client()
 
     ticket_data = {
         "description": description,
-        "processed": False
+        "processed": processed
     }
 
     if category:
