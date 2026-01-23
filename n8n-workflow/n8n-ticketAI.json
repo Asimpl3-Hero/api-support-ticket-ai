@@ -1,0 +1,163 @@
+{
+  "name": "n8n-ticketAI",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "895c5327-754a-4439-a977-d354d5e50df1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ffc74c55-18b9-4981-9258-d42050165e0f",
+      "name": "Webhook",
+      "webhookId": "895c5327-754a-4439-a977-d354d5e50df1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8f1fb6d8-6690-4662-8ebc-cd136f2f767d",
+              "leftValue": "={{ $json.sentiment }}",
+              "rightValue": "negativo",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "141243c4-d65d-4078-af67-ad051e00d64c",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        624,
+        0
+      ],
+      "id": "61d5f194-5bb4-44bb-b974-65bd047de0df",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "fromEmail": "jallotteubede-8928@yopmail.com",
+        "toEmail": "soporte-vivetori@yopmail.com",
+        "subject": "[ALERTA] Ticket con sentimiento negativo detectad",
+        "html": "=<h2>🚨 Alerta de Ticket Negativo</h2>\n\n<p>El sistema <strong>AI-Powered Support Co-Pilot</strong> ha detectado un ticket con\n<strong>sentimiento negativo</strong>.</p>\n\n<hr />\n\n<p><strong>ID del Ticket:</strong> {{ $json.ticket_id || $json.id }}</p>\n<p><strong>Categoría:</strong> {{ $json.category }}</p>\n<p><strong>Sentimiento:</strong> {{ $json.sentiment }}</p>\n\n<p><strong>Descripción del ticket:</strong></p>\n<blockquote>\n  {{ $json.description }}\n</blockquote>\n\n<hr />\n\n<p>\nEste mensaje corresponde a una <em>notificación simulada</em> generada automáticamente\npor el flujo de n8n.\n</p>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        912,
+        -128
+      ],
+      "id": "171b2d82-9aa7-485f-b201-8acd8f48e148",
+      "name": "Send email",
+      "webhookId": "cfa1bbc3-b890-4e51-865f-0fb3313dbdf4",
+      "credentials": {
+        "smtp": {
+          "id": "IxuGGaWkukVIm7gR",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://python-api.ondeploy.store:8000/process-ticket",
+        "sendBody": true,
+        "contentType": "=json",
+        "specifyBody": "json",
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "jsonBody": "={\n  \"ticket_id\": \"{{ $json.body.record.id }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        304,
+        0
+      ],
+      "id": "c1989c83-7d10-45c4-b252-7f114b1c43b0",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "55034b31-edf7-4d3a-9cb1-c870f60f9680",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0b4052cb9fc4901f3fb3fbda6058675157dc8e1ed8cab86ee9b3e3f0a660cb9a"
+  },
+  "id": "PMMnm7hZtdc8nfwqHNfH6",
+  "tags": []
+}

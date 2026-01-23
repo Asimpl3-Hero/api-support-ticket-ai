@@ -19,3 +19,8 @@ Sistema de gestión de tickets de soporte sistema capaz de recibir tickets de so
 ├── n8n-workflow/   # Workflows de automatización
 └── supabase/       # Table & RLS policies
 ```
+
+## Produccion
+
+- **Frontend:** [https://ai-dashboard.ondeploy.store/](https://ai-dashboard.ondeploy.store/)
+- **API:** [https://python-api.ondeploy.store/docs](https://python-api.ondeploy.store/docs)
