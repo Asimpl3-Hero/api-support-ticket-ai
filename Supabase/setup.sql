@@ -14,14 +14,21 @@ create table if not exists public.tickets (
 );
 
 
--- Habilitar Row Level Security para control de acceso
+-- Habilitar Row Level Security para control de acceso 
 alter table public.tickets enable row level security;
 
 
--- Política: Permitir lectura pública de todos los tickets
--- Nota: En producción, considera restringir según autenticación
-create policy "ticketpolicy"
-on public.tickets
-for select
-to public
-using (true);
+-- SELECT - Política: Permitir lectura 
+CREATE POLICY "Tickets: public select"
+ON public.tickets
+FOR SELECT
+TO anon, authenticated
+USING (true);
+
+
+-- INSERT - Política: Permitir inserts 
+CREATE POLICY "Tickets: public insert"
+ON public.tickets
+FOR INSERT
+TO anon, authenticated
+WITH CHECK (true);

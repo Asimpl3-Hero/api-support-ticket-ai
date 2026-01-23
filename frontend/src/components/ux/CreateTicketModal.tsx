@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { createTicket } from '../../lib/api'
 import { useToast } from './Toast'
+import type { Ticket } from '../../types/ticket'
 
 interface CreateTicketModalProps {
   isOpen: boolean
   onClose: () => void
+  onTicketCreated?: (ticket: Ticket) => void
 }
 
 const CATEGORIES = [
@@ -25,7 +27,7 @@ const SENTIMENTS = [
   { value: 'neutro', label: 'Neutro' },
 ]
 
-export function CreateTicketModal({ isOpen, onClose }: CreateTicketModalProps) {
+export function CreateTicketModal({ isOpen, onClose, onTicketCreated }: CreateTicketModalProps) {
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState('')
   const [sentiment, setSentiment] = useState('')
@@ -59,13 +61,25 @@ export function CreateTicketModal({ isOpen, onClose }: CreateTicketModalProps) {
     try {
       setLoading(true)
 
-      await createTicket({
+      const response = await createTicket({
         description: description.trim(),
         category: category || null,
         sentiment: sentiment || null,
       })
 
-      showToast('success', 'Ticket creado exitosamente')
+      // Agregar ticket al estado local inmediatamente
+      if (onTicketCreated) {
+        onTicketCreated({
+          id: response.ticket_id,
+          description: response.description,
+          category: response.category,
+          sentiment: response.sentiment,
+          processed: response.processed,
+          created_at: new Date().toISOString(),
+        })
+      }
+
+      showToast('success', response.message)
       resetForm()
       onClose()
     } catch (err) {
@@ -172,7 +186,7 @@ export function CreateTicketModal({ isOpen, onClose }: CreateTicketModalProps) {
             </div>
 
             <p className="text-xs text-text-muted">
-              Si no seleccionas categoría o sentimiento, podrás detectarlos automáticamente con IA después de crear el ticket.
+              Si no seleccionas categoría o sentimiento, se detectarán automáticamente con IA al crear el ticket.
             </p>
           </div>
 

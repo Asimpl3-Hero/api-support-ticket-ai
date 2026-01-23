@@ -159,6 +159,20 @@ export function useTickets() {
     return result
   }, [tickets, activeFilter, searchQuery])
 
+  // Agregar ticket manualmente al estado (para actualización inmediata sin Realtime)
+  function addTicket(ticket: Ticket) {
+    setTickets((current) => [ticket, ...current])
+  }
+
+  // Actualizar ticket manualmente (para cuando se procesa con IA)
+  function updateTicket(updatedTicket: Ticket) {
+    setTickets((current) =>
+      current.map((ticket) =>
+        ticket.id === updatedTicket.id ? updatedTicket : ticket
+      )
+    )
+  }
+
   return {
     tickets: filteredTickets,
     allTickets: tickets,
@@ -170,5 +184,7 @@ export function useTickets() {
     setSearchQuery,
     activeFilter,
     setActiveFilter,
+    addTicket,
+    updateTicket,
   }
 }

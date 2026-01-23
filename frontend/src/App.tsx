@@ -21,6 +21,7 @@ function App() {
     setSearchQuery,
     activeFilter,
     setActiveFilter,
+    addTicket,
   } = useTickets()
 
   return (
@@ -60,6 +61,7 @@ function App() {
       <CreateTicketModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+        onTicketCreated={addTicket}
       />
     </div>
   )
